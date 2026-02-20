@@ -1,9 +1,22 @@
-FROM damir2002/cyberpunk:latest
+FROM debian:bookworm-slim
 
-RUN rm -rf *
+RUN apt-get update && apt-get install -y \
+    openjdk-17-jdk \
+    gradle \
+    libxext6 \
+    libxrender1 \
+    libxtst6 \
+    libxi6 \
+    libxrandr2 \
+    x11-apps \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY out/production/Cyberpunk .
-COPY libs/sqlite-jdbc-3.7.2.jar .
+WORKDIR /app
 
-CMD java -cp ".:sqlite-jdbc-3.7.2.jar" Main
+COPY build.gradle settings.gradle ./
+COPY src ./src
+COPY libs ./libs
 
+RUN gradle build --no-daemon
+
+CMD ["java", "-jar", "build/libs/cyberpunk-platformer-1.0.0.jar"]
