@@ -50,10 +50,11 @@ public class Database {
      */
     private Database() {
         try {
-
             Class.forName("org.sqlite.JDBC");
-            String relativePath = Objects.requireNonNull(Database.class.getClassLoader().getResource("Database/CYBERPUNK_DATABASE.db")).getPath();
-            connection = DriverManager.getConnection("jdbc:sqlite:" + relativePath);
+            connection = DriverManager.getConnection("jdbc:sqlite::memory:");
+            
+            // Load initial schema from resource if needed
+            createSavesTable();
         } catch (Exception e) {
             System.err.println(e.getClass().getName() + ": " + e.getMessage());
             System.exit(0);

@@ -103,22 +103,20 @@ public class Animation implements StaticComponent {
     /**
      * This constructor loads an animation from memory.
      *
-     * @param path             where the animation sprite sheet is found
+     * @param spriteSheet      the sprite sheet image
      * @param spriteSheetWidth width of the sprite-sheet
      * @param width            in-game width of the image
      * @param height           in-game height of the image
      * @param box              colliding boundary
      * @param type             animation related type
-     * @throws IOException when fail to load image
      */
-    public Animation(String path, int spriteSheetWidth, int width, int height, Rectangle box, AnimationType type) throws IOException {
+    public Animation(BufferedImage spriteSheet, int spriteSheetWidth, int width, int height, Rectangle box, AnimationType type) {
         this.type = type;
         activeImageIndex = 0;
         this.width = (int) (width * MAP_SCALE);
         this.height = (int) ((height - box.getMinY() - 1) * MAP_SCALE);
         images = new ArrayList<>();
 
-        BufferedImage spriteSheet = ImageIO.read(new File(path));
         for (int index = 0; index < spriteSheetWidth / width; index++) {
             images.add(spriteSheet.getSubimage(index * width, box.getMinY(), width, height - box.getMinY() - 1));
         }

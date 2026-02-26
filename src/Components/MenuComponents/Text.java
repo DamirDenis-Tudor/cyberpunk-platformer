@@ -49,8 +49,7 @@ public class Text implements StaticComponent, Serializable {
     static {
         try {
             String source = "Fonts/FutureMillennium.ttf";
-            source = Objects.requireNonNull(Database.class.getClassLoader().getResource(source)).getPath();
-            font = Font.createFont(TRUETYPE_FONT, new File(source));
+            font = Font.createFont(TRUETYPE_FONT, Database.class.getClassLoader().getResourceAsStream(source));
         } catch (FontFormatException e) {
             System.out.println(e.getMessage());
         } catch (IOException e) {

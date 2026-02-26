@@ -1,7 +1,6 @@
-FROM debian:bookworm-slim
+FROM eclipse-temurin:21-jdk-jammy
 
 RUN apt-get update && apt-get install -y \
-    openjdk-17-jdk \
     gradle \
     libxext6 \
     libxrender1 \
@@ -16,7 +15,9 @@ WORKDIR /app
 COPY build.gradle settings.gradle ./
 COPY src ./src
 COPY libs ./libs
+COPY gradle ./gradle
+COPY gradlew .
 
-RUN gradle build --no-daemon
+RUN ./gradlew build --no-daemon
 
 CMD ["java", "-jar", "build/libs/cyberpunk-platformer-1.0.0.jar"]

@@ -79,27 +79,22 @@ public class AssetDeposit {
         try {
             // -------------------------load menu wallpaper
             String source1 = "Resources/wallpapers/menu_wallpaper1.png";
-            source1 = Objects.requireNonNull(Database.class.getClassLoader().getResource(source1)).getPath();
-            menuImages.put(ComponentType.MENU_WALLPAPER, new ImageWrapper(ImageIO.read(new File(source1))));
+            menuImages.put(ComponentType.MENU_WALLPAPER, new ImageWrapper(ImageIO.read(Database.class.getClassLoader().getResourceAsStream(source1))));
 
             //--------------------------load map previews
             source1 = "Resources/wallpapers/Green-Zone-Tileset-Pixel-Art.png";
-            source1 = Objects.requireNonNull(Database.class.getClassLoader().getResource(source1)).getPath();
-            menuImages.put(ComponentType.GREEN_MAP_PREVIEW, new ImageWrapper(ImageIO.read(new File(source1))));
+            menuImages.put(ComponentType.GREEN_MAP_PREVIEW, new ImageWrapper(ImageIO.read(Database.class.getClassLoader().getResourceAsStream(source1))));
 
             source1 = "Resources/wallpapers/Free-Industrial-Zone-Tileset-Pixel-Art.png";
-            source1 = Objects.requireNonNull(Database.class.getClassLoader().getResource(source1)).getPath();
-            menuImages.put(ComponentType.INDUSTRIAL_MAP_PREVIEW, new ImageWrapper(ImageIO.read(new File(source1))));
+            menuImages.put(ComponentType.INDUSTRIAL_MAP_PREVIEW, new ImageWrapper(ImageIO.read(Database.class.getClassLoader().getResourceAsStream(source1))));
 
             source1 = "Resources/wallpapers/Power-Station-Free-Tileset-Pixel-Art-768x512.jpg";
-            source1 = Objects.requireNonNull(Database.class.getClassLoader().getResource(source1)).getPath();
-            menuImages.put(ComponentType.POWER_MAP_PREVIEW, new ImageWrapper(ImageIO.read(new File(source1))));
+            menuImages.put(ComponentType.POWER_MAP_PREVIEW, new ImageWrapper(ImageIO.read(Database.class.getClassLoader().getResourceAsStream(source1))));
 
             // -------------------------load the overlay effects and set the transparency
             //TODO
             source1 = "Resources/resources/cyber-effects/Overlay/2.png";
-            source1 = Objects.requireNonNull(Database.class.getClassLoader().getResource(source1)).getPath();
-            BufferedImage image = ImageIO.read(new File(source1));
+            BufferedImage image = ImageIO.read(Database.class.getClassLoader().getResourceAsStream(source1));
             BufferedImage transparentImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics2D g2d = transparentImage.createGraphics();
             g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.0f)); // 20% transparency
@@ -117,8 +112,7 @@ public class AssetDeposit {
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 
             source1 = "Resources/in_game_assets/animations.tsx";
-            source1 = Objects.requireNonNull(Database.class.getClassLoader().getResource(source1)).getPath();
-            Document document = builder.parse(new File(source1));
+            Document document = builder.parse(Database.class.getClassLoader().getResourceAsStream(source1));
 
             Element root = document.getDocumentElement();
 
@@ -130,7 +124,7 @@ public class AssetDeposit {
                 Element imageElement = (Element) element.getElementsByTagName("image").item(0);
 
                 String source = imageElement.getAttribute("source").replace("..", "Resources");
-                source = Objects.requireNonNull(Database.class.getClassLoader().getResource(source)).getPath().replace("%20", " ");
+                BufferedImage img = ImageIO.read(Database.class.getClassLoader().getResourceAsStream(source));
                 String id = element.getAttribute("type");
                 int spriteSheetWidth = Integer.parseInt(imageElement.getAttribute("width"));
                 int height = Integer.parseInt(imageElement.getAttribute("height"));
@@ -142,7 +136,7 @@ public class AssetDeposit {
                 int boxHeight = (int) (Float.parseFloat(box.getAttributeNode("height").getValue()) * MAP_SCALE);
                 int boxWidth = (int) (Float.parseFloat(box.getAttributeNode("width").getValue()) * MAP_SCALE);
                 Rectangle boxBounding = new Rectangle(new Coordinate<>(x, y), boxWidth, boxHeight);
-                animations.put(AnimationType.valueOf(id), new Animation(source, spriteSheetWidth, width, height, boxBounding, AnimationType.valueOf(id)));
+                animations.put(AnimationType.valueOf(id), new Animation(img, spriteSheetWidth, width, height, boxBounding, AnimationType.valueOf(id)));
             }
 
             // -----------------------load game ComponentTypes
@@ -162,9 +156,7 @@ public class AssetDeposit {
 
 
             source1 = "Resources/in_game_assets/weapons&buletts.tsx";
-            source1 = Objects.requireNonNull(Database.class.getClassLoader().getResource(source1)).getPath().replace("%20", " ");
-
-            document = builder.parse(new File(source1));
+            document = builder.parse(Database.class.getClassLoader().getResourceAsStream(source1));
             root = document.getDocumentElement();
             elements = root.getElementsByTagName("tile");
 
@@ -173,17 +165,16 @@ public class AssetDeposit {
                 Element imageElement = (Element) element.getElementsByTagName("image").item(0);
 
                 String source = imageElement.getAttribute("source").replace("..", "Resources");
-                source = Objects.requireNonNull(Database.class.getClassLoader().getResource(source)).getPath().replace("%20", " ");
                 String id = element.getAttribute("type");
                 int width = Integer.parseInt(imageElement.getAttribute("width"));
                 int height = Integer.parseInt(imageElement.getAttribute("height"));
 
                 if (id.contains("GUN")) {
                     Rectangle boxBounding = new Rectangle(new Coordinate<>(0, 0), (int) (width), (int) (height));
-                    guns.put(ComponentType.valueOf(id), new Gun(ImageIO.read(new File(source)), boxBounding));
+                    guns.put(ComponentType.valueOf(id), new Gun(ImageIO.read(Database.class.getClassLoader().getResourceAsStream(source)), boxBounding));
                 } else {
                     Rectangle boxBounding = new Rectangle(new Coordinate<>(0, 0), (int) (width * 2), (int) (height * 2));
-                    bullets.put(ComponentType.valueOf(id), new Bullet(ImageIO.read(new File(source)), boxBounding));
+                    bullets.put(ComponentType.valueOf(id), new Bullet(ImageIO.read(Database.class.getClassLoader().getResourceAsStream(source)), boxBounding));
                 }
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {

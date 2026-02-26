@@ -72,21 +72,15 @@ public class GameMap extends DynamicComponent {
     public GameMap(Notifiable scene, ComponentType mapType) {
         this.scene = scene;
         this.mapType = mapType;
-        String path = "";
+        String resourcePath = "";
         switch (mapType) {
-            case GREEN_CITY ->
-                    path = Objects.requireNonNull(Database.class.getClassLoader().getResource("Resources/maps/green_map.tmx")).getPath();
-            case INDUSTRIAL_CITY ->
-                    path = Objects.requireNonNull(Database.class.getClassLoader().getResource("Resources/maps/industrial_map.tmx")).getPath();
-            case POWER_STATION ->
-                    path = Objects.requireNonNull(Database.class.getClassLoader().getResource("Resources/maps/power_map.tmx")).getPath();
+            case GREEN_CITY -> resourcePath = "Resources/maps/green_map.tmx";
+            case INDUSTRIAL_CITY -> resourcePath = "Resources/maps/industrial_map.tmx";
+            case POWER_STATION -> resourcePath = "Resources/maps/power_map.tmx";
         }
         try {
-            //   first initialize the document element
             DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-
-            //  then create the parsed document
-            Document document = builder.parse(new File(path));
+            Document document = builder.parse(Database.class.getClassLoader().getResourceAsStream(resourcePath));
             document.getDocumentElement().normalize();
             //  create the root element
             Element root = document.getDocumentElement();
@@ -97,8 +91,7 @@ public class GameMap extends DynamicComponent {
             tiles = new HashMap<>();
             Element source = (Element) root.getElementsByTagName("tileset").item(0);
             String source1 = source.getAttribute("source").replace("..", "Resources");
-            source1 = Objects.requireNonNull(Database.class.getClassLoader().getResource(source1)).getPath();
-            Document tilesDocument = builder.parse(new File(source1));
+            Document tilesDocument = builder.parse(Database.class.getClassLoader().getResourceAsStream(source1));
             Element tilesRoot = tilesDocument.getDocumentElement();
             NodeList elements = tilesRoot.getElementsByTagName("tile");
 
@@ -109,7 +102,7 @@ public class GameMap extends DynamicComponent {
                 Element imageElement = (Element) tileElement.getFirstChild().getNextSibling();
 
                 String tileSource = imageElement.getAttribute("source").replace("..", "Resources");
-                tileSource = Objects.requireNonNull(Database.class.getClassLoader().getResource(tileSource)).getPath().replace("%20", " ");
+                tileSource = Database.class.getClassLoader().getResource(tileSource).getPath().replace("%20", " ");
                 String tileId = Integer.toString(Integer.parseInt(tileElement.getAttribute("id")) + 1);
                 int tileWidth = (int) (Integer.parseInt(imageElement.getAttribute("width")) * MAP_SCALE);
                 int tileHeight = (int) (Integer.parseInt(imageElement.getAttribute("height")) * MAP_SCALE);
@@ -124,8 +117,7 @@ public class GameMap extends DynamicComponent {
 
             Element backGroundSource = (Element) root.getElementsByTagName("tileset").item(1);
             source1 = backGroundSource.getAttribute("source").replace("..", "Resources");
-            source1 = Objects.requireNonNull(Database.class.getClassLoader().getResource(source1)).getPath();
-            Document backgroundDocument = builder.parse(new File(source1));
+            Document backgroundDocument = builder.parse(Database.class.getClassLoader().getResourceAsStream(source1));
             document.getDocumentElement().normalize();
 
             Element backgroundRoot = backgroundDocument.getDocumentElement();
@@ -138,8 +130,7 @@ public class GameMap extends DynamicComponent {
                 Element tileElement = (Element) backgrounds.item(index);
                 Element imageElement = (Element) tileElement.getFirstChild().getNextSibling();
                 source1 = imageElement.getAttribute("source").replace("..", "Resources");
-                source1 = Objects.requireNonNull(Database.class.getClassLoader().getResource(source1)).getPath().replace("%20", " ");
-                background.addImage(ImageIO.read(new File(source1)));
+                background.addImage(ImageIO.read(Database.class.getClassLoader().getResourceAsStream(source1)));
             }
 
             // -------------------------------------
@@ -151,8 +142,7 @@ public class GameMap extends DynamicComponent {
             Element objSource = (Element) root.getElementsByTagName("tileset").item(2);
             String lastMapId = objSource.getAttribute("firstgid");
             source1 = objSource.getAttribute("source").replace("..", "Resources");
-            source1 = Objects.requireNonNull(Database.class.getClassLoader().getResource(source1)).getPath();
-            Document objectsDocument = builder.parse(new File(source1));
+            Document objectsDocument = builder.parse(Database.class.getClassLoader().getResourceAsStream(source1));
             Element objectsRoot = objectsDocument.getDocumentElement();
             NodeList objectsElements = objectsRoot.getElementsByTagName("tile");
 
@@ -163,7 +153,7 @@ public class GameMap extends DynamicComponent {
                 Element imageElement = (Element) objectElement.getFirstChild().getNextSibling();
 
                 String objectSource = imageElement.getAttribute("source").replace("..", "Resources");
-                objectSource = Objects.requireNonNull(Database.class.getClassLoader().getResource(objectSource)).getPath().replace("%20", " ");
+                objectSource = Database.class.getClassLoader().getResource(objectSource).getPath().replace("%20", " ");
                 String objectId = Integer.toString(Integer.parseInt(objectElement.getAttribute("id")) + Integer.parseInt(lastMapId));
                 int objectWidth = (int) (Integer.parseInt(imageElement.getAttribute("width")) * MAP_SCALE);
                 int objectHeight = (int) (Integer.parseInt(imageElement.getAttribute("height")) * MAP_SCALE);
